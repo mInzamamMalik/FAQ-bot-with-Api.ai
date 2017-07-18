@@ -1,7 +1,6 @@
 var express = require("express");
 var mongoose = require("mongoose");
-
-
+var bodyParser = require('body-parser');
 
 var schema = new mongoose.Schema({
     question: String,
@@ -15,7 +14,6 @@ schema.index({ question: 'text' });
 // schema.index({'$**': 'text'});
 
 var MyModel = mongoose.model("faq", schema);
-
 // write value:
 //
 // var newEntry = new MyModel({
@@ -25,28 +23,29 @@ var MyModel = mongoose.model("faq", schema);
 // newEntry.save();
 
 var app = express();
+app.use(bodyParser.json());
 
 app.use("/webhook", function (req, res, next) {
 
-    console.log("request: ", req);
+    console.log("request: ", req.body);
+    console.log("request: ", req.body.result);
 
-    MyModel.find({ $text: { $search: req.query.q } })
+    MyModel.find({ $text: { $search: req.body.result.resolvedQuery } })
         // .skip(20)
         // .limit(10)
         .exec(function (err, data) {
             if (!err) {
                 console.log("data: ", data);
-                res.send(data)
+                res.send({
+                    displayText: data[0].answer,
+                    speech: data[0].answer
+                })
             } else {
                 console.log("err: ", err);
                 res.send("error");
             }
         });
 })
-
-app.use('/abc',function (req, res, next) {
-    res.send("abc working");
-});
 
 app.listen(3000, function () {
     console.log("listening to 3000");

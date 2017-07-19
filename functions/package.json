@@ -9,9 +9,11 @@
   },
   "dependencies": {
     "@types/cors": "^2.8.1",
+    "@types/mongoose": "^4.7.18",
     "cors": "^2.8.4",
     "firebase-admin": "^4.1.2",
-    "firebase-functions": "^0.5"
+    "firebase-functions": "^0.5",
+    "mongoose": "^4.11.3"
   },
   "private": true,
   "devDependencies": {
